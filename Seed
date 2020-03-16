@@ -1,0 +1,39 @@
+class seed{
+  private float seedX;
+  private float seedY;
+  private boolean planted = false;
+  
+  public seed(float seedX, float seedY){
+    this.seedX = seedX;
+    this.seedY = seedY;
+  }
+  
+  public void drawSeed(){
+    strokeWeight(1);
+    stroke(0);
+    fill(255, 204, 102);
+    ellipse(seedX, seedY, 10, 5);
+    
+    // Check the plants state
+    if (!planted){
+      seedState();  
+    }  
+  }
+  
+  /**
+    Inputes: none
+    Outputes: none
+    Purpose: To change the behaviour of the seed based on its state in the environment using the planted global var
+  **/
+  public void seedState(){
+    if (this.seedY > 500 && !planted){ // Case where seed has reached the ground at 500px
+      roots.add(new root (seedX, seedY)); // Creates a root node where is lands
+      planted = true; // This loop only runs once as the flag is hit here
+    }
+    else {
+      seedY = seedY + 1; // Seed is falling towards the ground slowly
+      seedX = seedX + random(-2, 2); // Seed sways left to right as if floating due to wind
+    }
+  }
+  
+}
