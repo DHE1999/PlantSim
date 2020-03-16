@@ -1,0 +1,63 @@
+class weather {
+  private boolean raining = false;
+  private float startRainTime = 0;
+  private float currentRainTime = 0;
+  ArrayList<drop> drops = new ArrayList<drop>();
+  
+  weather(){
+    for (int i = 0; i < 1000; i++){
+      drops.add(new drop());  
+    }
+  }
+  
+  public void rain() {
+    
+    if (!raining) {
+      if ((int) random(0, 100) > 98) { // 1/1000 chance of it raining
+        startRainTime = millis();
+        raining = true;
+      }
+      else{
+        for (drop d: drops){
+          d.resetDrop();  
+        }
+      }
+      
+    } else if ((currentRainTime - startRainTime) > 20000) {
+      raining = false;
+    } else {
+      for (int i = 0; i < (int) (1000 * sin((PI)/(20000/(currentRainTime - startRainTime)))); i++){ // Makes it rain progressively more and more
+        drops.get(i).drawDrop();
+      }
+      currentRainTime = millis();
+    }
+    
+    fill(0);
+    text("time since started raining " + (currentRainTime - startRainTime)/1000, 150, 25);
+  }
+}
+
+class drop {
+  float dropY = -10;
+  int xpos = (int) random(10, 1270);
+  float fallspeed = random (2, 5);
+  int dropLength = 15;
+  
+  public void drawDrop(){
+    if (dropY > 490){
+        dropY = -10;  
+        fallspeed = random (2, 5);
+        xpos = (int) random(10, 1270);
+    }
+    
+    dropY = dropY + fallspeed;
+    stroke(100, 100, 255);
+    strokeWeight(1);
+    line(xpos, dropY, xpos, dropY + dropLength);
+  }
+  
+  public void resetDrop(){
+    dropY = -10;
+  }
+  
+}
