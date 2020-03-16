@@ -1,0 +1,13 @@
+class branch {
+
+  public branch(float startX, float startY) {
+    
+  }
+
+  public void drawBranch() {
+    
+    fill(0);
+    stroke(50, 175, 100);
+    
+  }
+}
