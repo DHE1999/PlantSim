@@ -1,0 +1,117 @@
+class root{
+  private float headX;
+  private float headY;
+  private float tailX; 
+  private float tailY;
+  private float growth = 0;
+  private boolean hasFirstChild, has2ndChild = false;
+  private root parent = null; 
+  private int maxThickness = 10;
+  private color branches;
+  
+  // This is the first case scenario where the node is the actual root node on the seed
+  public root(float startX, float startY){
+    this.headX = startX;
+    this.headY = startY;
+    this.tailX = this.headX + random(-5, 5);
+    this.tailY = this.headY + 10;    
+  }
+  
+  /**
+  Inputes: parent root
+  Outputes: none
+  Purpose: Take a parent root node and draw a new child below it at a new angle
+  **/
+  public root(root parent){
+    this.headX = parent.getTailX();
+    this.headY = parent.getTailY();
+    
+    if (!parent.has2ndChild){ // Case if the node only has one child so the second child root can go right or left
+      this.tailX = this.headX + random(-5, 5);
+    }
+    // Otherwise if this is the 2nd child then is must go left or right based on the parents direction
+    else if (parent.getHeadX() > parent.getTailX()){ // The 2nd child root will go left
+      this.tailX = this.headX + random(-30, -10);
+      branches = color(random(0, 255), random(0, 255),random(0, 255));
+    }
+    else { // The 2nd child will go right
+      this.tailX = this.headX + random(10, 30);
+      branches = color(random(0, 255), random(0, 255),random(0, 255));
+    }
+     
+    // If the parent branches is not 0 then not the main root stem so change colour and inherits the colour
+    if (parent.branches != 0){
+      branches = parent.branches;
+    }
+    this.tailY = this.headY + 10; // The length of the root 
+    this.parent = parent; // Assigning the parent for future reference
+  }
+  
+  public float getTailX(){
+    return this.tailX;  
+  }
+  
+  public float getTailY(){
+    return this.tailY;  
+  }
+  
+  public float getHeadX(){
+    return this.headX;  
+  }
+  
+  public float getHeadY(){
+    return this.headY;  
+  }
+  
+  public float getGrowth(){
+    return this.growth;  
+  }
+  
+  public void drawRoot(){
+    strokeWeight(this.growth);
+    
+    fill(0);
+    
+    // Change colour of the root if its from a split as it inherits that colour, otherwise normal
+    if (branches != 0){
+      stroke(branches);
+    }
+    else {
+      stroke(150, 140, 80);
+    }
+    
+    fill(255);
+    //text(this.growth, this.tailX + 20, this.tailY + 20); // Displays the growth the nodes
+    line(this.headX, this.headY, this.tailX, this.tailY); 
+  }
+  
+  /**
+  Inputes: none
+  Outputes: none
+  Purpose: Grows the root to maxThickness and adds a potential 2nd child by random chance 
+  **/
+  public void growRoot(){
+    if (parent != null){ // Case where the node is not the first root node
+    
+      if (this.growth < parent.getGrowth() - parent.getGrowth()/10){
+        this.growth += 0.01;
+        // Cannot split and have a second child unless is on the main root stem so branches can only happen once
+        if (random(0, 2000) >= 1999 && branches == 0){ // Chances of spawning a 2nd child are 1 in 5000 per growth which happens
+          has2ndChild = true;
+          newRoots.add(new root(this));
+        }
+      }
+    } else { // If it is the first node (So no parent), it will grow normally
+      if (growth < maxThickness){
+        this.growth += 0.01;
+      }
+    }
+    
+    // Adds a child node if has grown enough and root is not off the screen and doesn't have first child
+    if (this.growth > 0.1 && this.headY < 750 && !this.hasFirstChild){
+      this.hasFirstChild = true;
+      newRoots.add(new root(this));
+    }
+  }
+  
+}
